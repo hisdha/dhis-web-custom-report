@@ -1,0 +1,96 @@
+<div class="row">
+    <div class="col-sm-12 hideInPrint pull-left">
+        <button type="button" 
+                class="btn btn-primary"
+                title="{{'export_to_excel'| translate}}"
+                ng-click="exportData()">
+            <i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_excel' | translate}}
+        </button>
+        <button type="button" 
+                class="btn btn-info horizontal-spacing" 
+                title="{{'export_to_pdf'| translate}}"
+                onclick="javascript:window.print()">
+            <i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_pdf' | translate}}
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 small-vertical-spacing"  id="exportTable">
+        <style type="text/css">
+            body {
+                background-color: #C2D5F2;
+            }
+            body, td, th {
+                color: #000;
+            }
+            .de-table-hdr{
+                background-color: #666;
+                color: #000 !important;
+            }
+
+            .de-style{
+                background-color: #ffffcc;
+            }
+
+            .de-total-style{    
+                font-weight: bold;
+                background-color: #eee;
+            }
+
+            .ds-hdr{
+                background-color: #ffffcc;
+                padding: 20px;
+                font-size: 20pt;
+            }
+
+            .ind-style{
+                font-size: 10pt !important;
+                font-weight: bold;
+                background-color: #ccc;
+            }
+        </style>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="pull-center de-table-hdr dsr-name">
+                        {{model.reportName}}
+                    </th> 
+                </tr>
+                <tr>
+                    <th></th>
+                    <th class="pull-center de-table-hdr" colspan="{{model.baseRateColumns.length}}" ng-repeat="col in model.columns">
+                        {{col.name}}
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th class="pull-center" ng-repeat="col in model.rateColumns">
+                        {{col.name}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-if="model.filterCompleteness" ng-repeat="reportRow in model.reportRows">
+                <tr ng-repeat="(key, value) in model.categoryOptionGroupSets">
+                    <td>
+                        {{reportRow.name}} - {{model.filterGroups[key]}}
+                    </td>
+                    <td class="pull-center" ng-repeat="col in model.rateColumns">
+                        {{dataValues[col.id + "-" + key + "-" +  reportRow.id]}}
+                    </td>
+                </tr>
+            </tbody>
+            <tbody ng-if="!model.filterCompleteness">
+                <tr ng-repeat="reportRow in model.reportRows">
+                    <td>
+                        {{reportRow.name}}
+                    </td>
+                    <td class="pull-center" ng-repeat="col in model.rateColumns">
+                        {{dataValues[col.id + "-" + reportRow.id]}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

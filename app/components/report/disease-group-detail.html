@@ -1,0 +1,56 @@
+<div class="modal-header page">
+    <h2>{{model.diseaseGroup.name}}</h2>
+</div>
+<div class="modal-body">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="report-table" ng-if="model.diseaseGroup.dataElements.length > 0">
+                <thead>
+                    <tr> 
+                        <th class="pull-center de-table-hdr">
+                            {{'code'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr">
+                            {{'disease'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-repeat="col in model.columns">
+                            {{col.name}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-if="model.columns.length > 1">
+                            {{'total' | translate}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="deId in model.diseaseGroup.dataElements "
+                       ng-init="de = model.dataElements[deId]">
+                    <tr class="de-total-style">
+                        <td ng-bind="de.code"></td>
+                        <td ng-bind="de.displayFormName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">
+                            {{dataValues[de.id]['total'][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{dataValues[de.id]['total']['grandTotal']}}
+                        </td>
+                    </tr>
+
+                    <tr class="de-style" ng-repeat="oco in model.filteredOptionCombos" ng-if="dataValues[de.id][oco.id]">
+                        <td></td>
+                        <td ng-bind="oco.displayName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">
+                            {{dataValues[de.id][oco.id][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{dataValues[de.id][oco.id]['grandTotal']}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<div class="modal-footer">    
+    <button class="btn btn-default" ng-click="close()">{{'close'| translate}}</button>    
+</div>

@@ -1,0 +1,143 @@
+<div class="row">
+    <div class="col-sm-12 hideInPrint pull-left">
+        <button type="button" 
+                class="btn btn-primary"
+                title="{{'export_to_excel'| translate}}"
+                ng-click="exportData()">
+            <i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_excel' | translate}}
+        </button>
+        <button type="button" 
+                class="btn btn-info horizontal-spacing" 
+                title="{{'export_to_pdf'| translate}}"
+                onclick="javascript:window.print()">
+            <i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_pdf' | translate}}
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 small-vertical-spacing"  id="exportTable">
+        <style type="text/css">
+            body {
+                background-color: #C2D5F2;
+            }
+            body, td, th {
+                color: #000;
+            }
+            .de-table-hdr{
+                background-color: #666;
+                color: #000 !important;
+            }
+
+            .de-style{
+                background-color: #ffffcc;
+            }
+
+            .de-total-style{    
+                font-weight: bold;
+                background-color: #eee;
+            }
+
+            .ds-hdr{
+                background-color: #ffffcc;
+                padding: 20px;
+                font-size: 20pt;
+            }
+
+            .ind-style{
+                font-size: 10pt !important;
+                font-weight: bold;
+                background-color: #ccc;
+            }
+        </style>
+        <table class="report-table" ng-if="model.selectedDataSet.dataElements.length > 0">
+            <thead>
+                <tr>
+                    <th colspan="100%" class="pull-center de-table-hdr dsr-name">
+                        {{model.reportName}}
+                    </th> 
+                </tr>
+                <tr> 
+                    <th class="pull-center de-table-hdr">
+                        {{'s_no'| translate}}
+                    </th>
+                    <th class="pull-center de-table-hdr">
+                        {{'activity'| translate}}
+                    </th>
+                    <th class="pull-center de-table-hdr" ng-repeat="col in model.columns">
+                        {{col.name}}
+                    </th>
+                    <th class="pull-center de-table-hdr" ng-if="model.columns.length > 1">
+                        {{'total' | translate}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="de in model.selectedDataSet.dataElements"
+                   ng-init="ocos = model.categoryCombos[de.categoryCombo.id].categoryOptionCombos">
+                <tr ng-if="de.displayTitle">
+                    <td class="ind-style" ng-bind="de.displayTitle.serialNumber">                        
+                    </td>
+                    <td class="ind-style" ng-bind="de.displayTitle.displayName">
+                    </td>
+                    <td class="ind-style" colspan="{{model.columns.length > 1 ? model.columns.length + 1 : model.columns.length}}"></td>
+                </tr>
+
+                <tr ng-repeat="ind in model.selectedDataSet.indicators" ng-if="ind.params.indexOf(de.id) === 0 || ind.params[0].lastIndexOf(de.id, 0) === 0"><!-- last index added for indicators that are defined with option combos-->
+                    <td class="ind-style" ng-bind="ind.serial_number">                        
+                    </td>
+                    <td class="ind-style" ng-bind="ind.displayName">
+                    </td>
+                    <td class="ind-style pull-center" ng-repeat="col in model.columns">
+                        {{dataValues[ind.id]['total'][col.id]}}
+                    </td>
+                    <td ng-if="model.columns.length > 1">
+                        {{dataValues[ind.id]['total']['grandTotal']}}
+                    </td>
+                </tr>
+
+                <tr class="de-total-style" ng-if="ocos.length > 1">
+                    <td ng-bind="de.serial_number">
+                    </td>
+                    <td ng-bind="de.displayFormName">
+                    </td>
+                    <td class="pull-center" ng-repeat="col in model.columns">
+                        {{dataValues[de.id]['total'][col.id]}}
+                    </td>
+                    <td ng-if="model.columns.length > 1">
+                        {{dataValues[de.id]['total']['grandTotal']}}
+                    </td>
+                </tr>
+
+                <tr class="de-style" ng-repeat="oco in ocos" ng-if="model.greyedFields.indexOf(de.id + '.' + oco.id) === -1">
+                    <td>
+                        <!-- serial number location-->
+                        {{(de.serial_number && ocos.length >= 1) ? (de.serial_number + ".") : ''}} {{ocos.length <=1? ' ' : $index+1 }}
+                    </td>
+                    <td>
+                        <div class="oco-left-padding" ng-if="ocos.length > 1" ng-bind="oco.displayName">                            
+                        </div>
+                        <div ng-if="ocos.length === 1" ng-bind="de.displayFormName">
+                        </div>
+                    </td>
+                    <td class="pull-center" ng-repeat="col in model.columns">
+                        <span ng-if="ocos.length === 1">
+                            {{dataValues[de.id]['total'][col.id]}}
+                        </span>
+                        <span ng-if="ocos.length > 1">
+                            {{dataValues[de.id][oco.id][col.id]}}
+                        </span>
+                    </td>
+                    <td ng-if="model.columns.length > 1">
+                        <span ng-if="ocos.length === 1">
+                            {{dataValues[de.id]['total']['grandTotal']}}
+                        </span>
+                        <span ng-if="ocos.length > 1">
+                            {{dataValues[de.id][oco.id]['grandTotal']}}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>                        
+        </table>
+    </div>
+</div>

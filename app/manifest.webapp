@@ -1,0 +1,21 @@
+{
+    "version": "0.1",
+    "name": "Custom Data Set Report",
+    "description": "Custom Data Set Report App",
+    "launch_path": "index.html",
+    "icons": {
+        "16": "img/dhis-web-custom-report.png",
+        "48": "img/dhis-web-custom-report.png",
+        "128": "img/dhis-web-custom-report.png"
+    },
+    "developer": {
+        "name": "HISP",
+        "url": "http://dhis2.org"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": ".."
+        }
+    }
+}

@@ -1,0 +1,95 @@
+body, html {
+    width: 100% !important;
+    height: auto !important;
+    -webkit-print-color-adjust:exact !important;
+}
+
+.not-for-screen {
+    display: block !important;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+    color: white !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: white !important;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: white !important;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: white !important;
+}
+
+#header, #leftBar, .hideInPrint {
+    display: none !important;
+}
+
+span.select2-chosen.ng-binding.ng-hide {
+    display: none !important;
+}
+
+.select2-arrow, .ui-select-toggle {
+    display: none !important;
+}
+
+.dhis2-list-table-striped > thead > tr > th, .dhis2-list-table-striped > tbody > tr > th, .dhis2-list-table-striped > tfoot > tr > th, .dhis2-list-table-striped > thead > tr > td, .dhis2-list-table-striped > tbody > tr > td, .dhis2-list-table-striped > tfoot > tr > td {
+    border: 1px solid #ddd
+}
+
+.report-table {
+    border-collapse: collapse !important;
+    overflow: auto;
+    width: 100%;
+
+    border-collapse: collapse;
+    overflow-x: auto;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.report-table>thead>tr>th, 
+.report-table>tbody>tr>th, 
+.report-table>tfoot>tr>th, 
+.report-table>thead>tr>td, 
+.report-table>tbody>tr>td, 
+.report-table>tfoot>tr>td {
+    border: 1px solid #ddd !important;
+    color: #000;
+    padding: 2px 5px;
+}
+
+.empty-data-row {
+    color: #767676 !important;
+}
+
+.de-table-hdr{
+    background-color: #666;
+    color: #000 !important;
+}
+
+.de-style{
+    background-color: #ffffcc;
+}
+
+.de-total-style{    
+    font-weight: bold;
+    background-color: #eee;
+}
+
+.ds-hdr{
+    background-color: #ffffcc;
+    padding: 20px;
+    font-size: 20pt;
+}
+
+.dsr-name {
+    font-size: 18pt !important;
+}
+
+.ind-style{
+    font-size: 10pt !important;
+    font-weight: bold;
+    background-color: #ccc;
+}

@@ -1,0 +1,226 @@
+<div class="row hideInPrint">
+    <div class="col-sm-12 pull-left">
+        <button type="button" 
+                class="btn btn-primary"
+                title="{{'export_to_excel'| translate}}"
+                ng-click="exportData()">
+            <i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_excel' | translate}}
+        </button>
+        <button type="button" 
+                class="btn btn-info horizontal-spacing" 
+                title="{{'export_to_pdf'| translate}}"
+                onclick="javascript:window.print()">
+            <i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i>
+            {{'export_to_pdf' | translate}}        
+        </button>
+    </div>    
+</div>
+
+<div class="row remove-left-padding hideInPrint vertical-spacing">
+
+    <form class="form-horizontal col-sm-9" role="form" name="diseaseForm" novalidate>
+        <div class="panel report-panel-color">
+            <div class="panel-heading mouse-pointer" ng-click="model.showDiseaseFilters = !model.showDiseaseFilters; $event.stopPropagation();">
+                {{'disease_filters'| translate}}
+                <div class="pull-right">
+                    <a class="small-horizontal-spacing" href ng-click="model.showDiseaseFilters = !model.showDiseaseFilters; $event.stopPropagation();">
+                        <span ng-show="model.showDiseaseFilters" class="white-color"><i class="fa fa-chevron-up vertical-center" title="{{'collapse'| translate}}"></i></span>
+                        <span ng-show="!model.showDiseaseFilters" class="white-color"><i class="fa fa-chevron-down vertical-center" title="{{'expand'| translate}}"></i></span>
+                    </a>
+                </div>
+            </div>
+
+            <div ng-show="model.showDiseaseFilters" class="panel panel-body selectionArea-no-radius remove-bottom-margin">                
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3">
+                        {{'top_disease_list'| translate}}
+                    </label>
+                    <div class="col-sm-9">                        
+                        <input type="number" min="1" ng-model="model.maxDiseaseList" class="form-control small-vertical-spacing" placeholder="{{'top_list_number' | translate}}">
+                    </div>
+                </div>
+
+                <div class="form-group" ng-repeat="category in selectedCategoryCombo.categories">
+                    <label class="col-sm-3">
+                        {{category.displayName}}
+                    </label>
+                    <div class="col-sm-9">
+                        <ui-select multiple
+                                ng-model="category.selectedFilterOptions" 
+                                on-select="filterOptionCombos()"
+                                on-remove="filterOptionCombos()"
+                                style="width:100%;">
+                            <ui-select-match placeholder="{{'all'| translate}}">{{$item.displayName}}</ui-select-match>
+                            <ui-select-choices  repeat="option.displayName as option in category.categoryOptions | filter: $select.search | limitTo:maxOptionSize">
+                                <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox">
+                            <label><input type="checkbox" ng-model="model.showDiseaseGroup">{{'group_disease'|translate}} </label>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </div>
+    </form>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-12 small-vertical-spacing"  id="exportTable">
+        <style type="text/css">
+            body {
+                background-color: #C2D5F2;
+            }
+            body, td, th {
+                color: #000;
+            }
+            .de-table-hdr{
+                background-color: #666;
+                color: #000 !important;
+            }
+
+            .de-style{
+                background-color: #ffffcc;
+            }
+
+            .de-total-style{    
+                font-weight: bold;
+                background-color: #eee;
+            }
+
+            .ds-hdr{
+                background-color: #ffffcc;
+                padding: 20px;
+                font-size: 20pt;
+            }
+
+            .ind-style{
+                font-size: 10pt !important;
+                font-weight: bold;
+                background-color: #ccc;
+            }
+        </style>
+
+        <div ng-if="!model.showDiseaseGroup">
+            <table class="report-table" ng-if="model.totalDataValues.length > 0">
+                <thead>                            
+                    <tr>
+                        <th colspan="100%" class="pull-center de-table-hdr dsr-name">
+                            {{model.reportName}}
+                        </th> 
+                    </tr>
+                    <tr>
+                        <th colspan="100%">
+                            <input type="text" ng-model="model.selectedDisease" class="form-control" placeholder="{{'search_for_disease' | translate}}">
+                        </th>
+                    </tr>
+                    <tr> 
+                        <th class="pull-center de-table-hdr">
+                            {{'code'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr">
+                            {{'disease'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-repeat="col in model.columns">
+                            {{col.name}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-if="model.columns.length > 1">
+                            {{'total' | translate}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="dv in model.totalDataValues | filter: {displayName: model.selectedDisease } | limitTo : (model.maxDiseaseList ? model.maxDiseaseList : model.totalDataValues.length)"
+                       ng-init="de = model.dataElements[dv.id]">
+                    <tr class="de-total-style">
+                        <td ng-bind="de.code"></td>
+                        <td ng-bind="de.displayFormName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">
+                            {{dataValues[de.id]['total'][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{dataValues[de.id]['total']['grandTotal']}}
+                        </td>
+                    </tr>
+
+                    <tr class="de-style" ng-repeat="oco in model.filteredOptionCombos" ng-if="dataValues[de.id][oco.id]">
+                        <td></td>
+                        <td ng-bind="oco.displayName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">
+                            {{dataValues[de.id][oco.id][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{dataValues[de.id][oco.id]['grandTotal']}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div ng-if="model.showDiseaseGroup">
+            <table class="report-table" ng-if="model.totalGroupDataValues.length > 0">
+                <thead>                            
+                    <tr>
+                        <th colspan="100%" class="pull-center de-table-hdr dsr-name">
+                            {{model.reportName}}
+                        </th> 
+                    </tr>
+                    <tr>
+                        <th colspan="100%">
+                            <input type="text" ng-model="model.selectedDisease" class="form-control" placeholder="{{'search_for_disease' | translate}}">
+                        </th>
+                    </tr>
+                    <tr> 
+                        <th class="pull-center de-table-hdr">
+                            {{'code'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr">
+                            {{'disease'| translate}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-repeat="col in model.columns">
+                            {{col.name}}
+                        </th>
+                        <th class="pull-center de-table-hdr" ng-if="model.columns.length > 1">
+                            {{'total' | translate}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="gv in model.totalGroupDataValues | filter: {displayName: model.selectedDisease } | limitTo : (model.maxDiseaseList ? model.maxDiseaseList : model.totalGroupDataValues.length)"
+                       ng-init="deg = model.dataElementGroups[gv.group]"
+                       ng-click="showDiseaseGroupDetail(gv.group)" title="{{'show_group_detail'| translate}}"
+                       class="disease-group">
+                    <tr class="de-total-style">
+                        <td></td>
+                        <td ng-bind="deg.displayName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">
+                            {{groupDataValues[deg.id]['total'][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{groupDataValues[deg.id]['total']['grandTotal']}}
+                        </td>
+                    </tr>
+
+                    <tr class="de-style" ng-repeat="oco in model.filteredOptionCombos" ng-if="groupDataValues[deg.id][oco.id]">
+                        <td></td>
+                        <td ng-bind="oco.displayName"></td>
+                        <td class="pull-center" ng-repeat="col in model.columns">                            
+                            {{groupDataValues[deg.id][oco.id][col.id]}}
+                        </td>
+                        <td class="pull-center" ng-if="model.columns.length > 1">
+                            {{groupDataValues[deg.id][oco.id]['grandTotal']}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>
